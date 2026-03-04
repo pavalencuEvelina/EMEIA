@@ -5,66 +5,52 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  StatusBar,
   SafeAreaView,
+  StatusBar,
   Alert,
   ActivityIndicator,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
 
-import * as SecureStore from "expo-secure-store";
-import { loginUser } from "../services/login_api";
+import { registerUser } from "../services/register_api";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
 export default function LoginScreen({ navigation }: Props) {
+  const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+
   const [isLoading, setIsLoading] = useState(false);
 
-  async function getToken() {
-    let result = await SecureStore.getItemAsync("user_token");
-    if (result) {
-      console.log("User is logged in with token: " + result);
-      return result;
-    } else {
-      console.log("No token found.");
-      return null;
-    }
-  }
-
-  async function deleteToken() {
-    await SecureStore.deleteItemAsync("user_token");
-  }
-
-  // This is where your Spring Boot logic will eventually live
-  const handleLogin = async () => {
-    if (!email || !password) {
+  const handleRegister = async () => {
+    if (!username || !email || !password || !phoneNumber) {
       Alert.alert(
         "Error",
         "Look again through the fields, something is missing.",
       );
       return;
     }
+    if (!email.includes("@")) {
+      Alert.alert("Invalid Email", "Enter a real email address.");
+      return;
+    }
+    if (password.length < 6) {
+      Alert.alert("Weak Password", "Password must be at least 6 characters.");
+      return;
+    }
 
     setIsLoading(true);
-
     try {
-      const data = await loginUser(email, password);
+      await registerUser(username, email, password, phoneNumber);
 
-      if (data.token) Alert.alert("Login Successful", "Welcome back!");
-      else Alert.alert("Login Failed", "Check your credentials and try again.");
-
-      // 1. Save the token so the user stays logged in
-      await SecureStore.setItemAsync("user_token", data.token);
-
-      navigation.replace("SelectUser");
-    } catch (error) {
-      Alert.alert(
-        "Access Denied",
-        "Incorrect credentials. Try again.\n" + error,
-      );
+      Alert.alert("Success", "Account created. Now log in.", [
+        { text: "OK", onPress: () => navigation.navigate("Login") },
+      ]);
+    } catch (error: any) {
+      Alert.alert("Registration Error", error.message);
     } finally {
       setIsLoading(false);
     }
@@ -76,8 +62,17 @@ export default function LoginScreen({ navigation }: Props) {
 
       <View style={styles.innerContainer}>
         <Text style={styles.headerText}>
-          Welcome to <Text style={styles.italic}>EMEIA</Text>
+          Sign-Up WITH <Text style={styles.italic}>EMEIA</Text>
         </Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          placeholderTextColor="#888"
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
+        />
 
         <TextInput
           style={styles.input}
@@ -95,37 +90,40 @@ export default function LoginScreen({ navigation }: Props) {
           placeholderTextColor="#888"
           secureTextEntry
           value={password}
+          autoCapitalize="none"
           onChangeText={setPassword}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Phone Number"
+          placeholderTextColor="#888"
+          secureTextEntry
+          value={phoneNumber}
+          autoCapitalize="none"
+          onChangeText={setPhoneNumber}
+          keyboardType="phone-pad"
         />
 
         <TouchableOpacity
           style={styles.loginButton}
-          onPress={handleLogin}
+          onPress={handleRegister}
           disabled={isLoading}
         >
           {isLoading ? (
             <ActivityIndicator color="#000" />
           ) : (
-            <Text style={styles.loginButtonText}>LOGIN</Text>
+            <Text style={styles.loginButtonText}>SIGN-UP</Text>
           )}
         </TouchableOpacity>
 
+        {/* Hyperlink to Home */}
         <TouchableOpacity
           style={styles.linkContainer}
-          onPress={() => navigation.navigate("Register")}
+          onPress={() => navigation.goBack()}
         >
           <Text style={styles.hyperlinkText}>
-            Don't have an account? Register here
-          </Text>
-        </TouchableOpacity>
-
-        {/* just for testing, not part of the UI */}
-        <TouchableOpacity
-          style={styles.linkContainer}
-          onPress={() => navigation.navigate("SelectUser")}
-        >
-          <Text style={styles.hyperlinkText}>
-            Go to Home page (just for testing, will be removed later)
+            I have an account already, take me to Login
           </Text>
         </TouchableOpacity>
       </View>
@@ -136,7 +134,7 @@ export default function LoginScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000000", // True Black
+    backgroundColor: "#000000",
   },
   innerContainer: {
     flex: 1,
@@ -146,24 +144,24 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 32,
     fontWeight: "900",
-    color: "#FF8C00", // Bright Orange
+    color: "#FF8C00",
     textAlign: "center",
     marginBottom: 50,
     letterSpacing: 3,
     textTransform: "uppercase",
   },
   input: {
-    backgroundColor: "#1A1A1A", // Dark Grey for inputs
+    backgroundColor: "#1A1A1A",
     color: "#FFFFFF",
     padding: 18,
     borderRadius: 8,
     marginBottom: 15,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#FF8C00", // Orange border
+    borderColor: "#FF8C00",
   },
   loginButton: {
-    backgroundColor: "#FF8C00", // Orange Button
+    backgroundColor: "#FF8C00",
     padding: 18,
     borderRadius: 8,
     alignItems: "center",
