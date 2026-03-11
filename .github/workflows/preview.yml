@@ -9,6 +9,7 @@ jobs:
     name: Build & Post Preview QR
     runs-on: ubuntu-latest
     permissions:
+      contents: read         # needed to checkout private repo
       pull-requests: write   # needed to post the QR comment
 
     steps:
