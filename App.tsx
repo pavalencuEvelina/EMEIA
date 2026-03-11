@@ -13,7 +13,7 @@ import VerifyQuestsScreen from "./pages/VerifyQuestsScreen";
 import SettingsScreen from "./pages/SettingsScreen";
 import AddChildScreen from "./pages/AddChildScreen";
 import EditProfileScreen from "./pages/EditProfileScreen";
-
+ 
 export type RootStackParamList = {
   Login: undefined;
   SelectUser: undefined;
