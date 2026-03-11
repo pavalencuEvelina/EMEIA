@@ -1,0 +1,43 @@
+name: Expo PR Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  preview:
+    name: Build & Post Preview QR
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write   # needed to post the QR comment
+
+    steps:
+      # 1. Check out the PR branch
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Set up Node
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Set up Expo + EAS CLI, logged in with your EXPO_TOKEN secret
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      # 5. Create an EAS Update (OTA) for the PR — posts QR to PR comment automatically
+      - name: Publish EAS Update
+        uses: expo/expo-github-action/preview@v8
+        with:
+          command: eas update --auto --branch pr-${{ github.event.pull_request.number }}
+          comment: true          # posts QR code comment on the PR
+          working-directory: .   # root of the repo
