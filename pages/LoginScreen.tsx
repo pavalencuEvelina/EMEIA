@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   StyleSheet, Text, View, TextInput,
-  TouchableOpacity, StatusBar, Alert, ActivityIndicator,
+  TouchableOpacity, StatusBar, Alert, ActivityIndicator, Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -39,6 +39,14 @@ export default function LoginScreen({ navigation }: Props) {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
       <View style={styles.inner}>
+
+        {/* Logo */}
+        <Image
+          source={require("../assets/icon.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
         <Text style={styles.header}>
           Welcome to <Text style={styles.italic}>EMEIA</Text>
         </Text>
@@ -75,7 +83,14 @@ export default function LoginScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
   inner: { flex: 1, justifyContent: "center", paddingHorizontal: 30 },
-  header: { fontSize: 32, fontWeight: "900", color: "#FF8C00", textAlign: "center", marginBottom: 50, letterSpacing: 3, textTransform: "uppercase" },
+  logo: {
+    width: 120,
+    height: 120,
+    alignSelf: "center",
+    marginBottom: 16,
+    borderRadius: 60,
+  },
+  header: { fontSize: 28, fontWeight: "900", color: "#FF8C00", textAlign: "center", marginBottom: 40, letterSpacing: 3, textTransform: "uppercase" },
   italic: { fontStyle: "italic", fontWeight: "200" },
   input: { backgroundColor: "#1A1A1A", color: "#FFF", padding: 18, borderRadius: 8, marginBottom: 15, fontSize: 16, borderWidth: 1, borderColor: "#FF8C00" },
   btn: { backgroundColor: "#FF8C00", padding: 18, borderRadius: 8, alignItems: "center", marginTop: 20, elevation: 8 },

@@ -4,13 +4,14 @@ on:
   pull_request:
     types: [opened, synchronize]
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # opt into Node 24 now
-
 jobs:
   preview:
     name: Build & Post Preview QR
     runs-on: ubuntu-latest
+
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # silence Node 20 deprecation warning
+
     permissions:
       contents: read         # needed to checkout private repo
       pull-requests: write   # needed to post the QR comment
@@ -23,7 +24,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: ''           # disable npm cache — cache service is broken on this runner
 
       - name: Install dependencies
         run: npm ci

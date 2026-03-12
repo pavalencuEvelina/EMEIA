@@ -15,12 +15,11 @@ export default function MainAppAdminScreen({ navigation }: any) {
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const loadData = async (refreshing = false) => {
+  const loadData = async () => {
     try {
       const id = await SecureStore.getItemAsync("user_id");
       setParentId(id);
       if (!id) { navigation.replace("Login"); return; }
-
       const data = await adminService.getChildren(id);
       setChildren(data);
     } catch (error: any) {
@@ -33,7 +32,6 @@ export default function MainAppAdminScreen({ navigation }: any) {
 
   useEffect(() => { loadData(); }, []);
 
-  // Refresh when coming back from AddChild
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       if (!isLoading) loadData();
@@ -44,7 +42,9 @@ export default function MainAppAdminScreen({ navigation }: any) {
   const renderChildCard = ({ item }: { item: Child }) => (
     <TouchableOpacity
       style={styles.childCard}
-      onPress={() => navigation.navigate("ChildDashboardScreen", { childId: item.id, childName: item.name, isAdmin: true, parentId })}
+      onPress={() => navigation.navigate("ChildDashboardScreen", {
+        childId: item.id, childName: item.name, isAdmin: true, parentId,
+      })}
     >
       <View style={[styles.avatar, { backgroundColor: item.avatarColor || "#333" }]}>
         <Text style={styles.avatarInitial}>{item.name[0]}</Text>
@@ -67,32 +67,23 @@ export default function MainAppAdminScreen({ navigation }: any) {
       {/* SIDEBAR */}
       <View style={styles.sidebar}>
         <View>
-          {/* Verify quests */}
           <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("VerifyQuestsScreen")}>
             <MaterialCommunityIcons name="check-decagram" size={30} color="#FF8C00" />
           </TouchableOpacity>
-
-          {/* Add child */}
           <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("AddChild")}>
             <MaterialCommunityIcons name="account-plus" size={30} color="#FF8C00" />
           </TouchableOpacity>
-
-          {/* Switch profile */}
           <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("SelectUser")}>
             <MaterialCommunityIcons name="account-switch" size={30} color="#FF8C00" />
           </TouchableOpacity>
         </View>
-
-        {/* Settings */}
         <TouchableOpacity
           style={[styles.navItem, { marginBottom: 0 }]}
-          onPress={() =>
-            navigation.navigate("Settings", {
-              profileId: parentId,
-              profileType: "PARENT",
-              profileName: "Parent Account",
-            })
-          }
+          onPress={() => navigation.navigate("Settings", {
+            profileId: parentId,
+            profileType: "PARENT",
+            profileName: "Parent Account",
+          })}
         >
           <MaterialCommunityIcons name="cog" size={30} color="#555" />
         </TouchableOpacity>
@@ -114,7 +105,11 @@ export default function MainAppAdminScreen({ navigation }: any) {
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listPad}
             refreshControl={
-              <RefreshControl refreshing={isRefreshing} onRefresh={() => { setIsRefreshing(true); loadData(true); }} tintColor="#FF8C00" />
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={() => { setIsRefreshing(true); loadData(); }}
+                tintColor="#FF8C00"
+              />
             }
             ListEmptyComponent={
               <View style={styles.emptyContainer}>

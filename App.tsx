@@ -3,43 +3,35 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { warmUp } from "./services/apiUtils";
 
-import LoginScreen from "./pages/LoginScreen";
-import SelectUserScreen from "./pages/SelectUserScreen";
-import RegisterScreen from "./pages/RegisterScreen";
-import ProfileLoginScreen from "./pages/UserLoginScreen";
-import MainAppAdminScreen from "./pages/MainAppAdminScreen";
+import LoginScreen          from "./pages/LoginScreen";
+import SelectUserScreen     from "./pages/SelectUserScreen";
+import RegisterScreen       from "./pages/RegisterScreen";
+import ProfileLoginScreen   from "./pages/UserLoginScreen";
+import MainAppAdminScreen   from "./pages/MainAppAdminScreen";
 import ChildDashboardScreen from "./pages/ChildDashboardScreen";
-import VerifyQuestsScreen from "./pages/VerifyQuestsScreen";
-import SettingsScreen from "./pages/SettingsScreen";
-import AddChildScreen from "./pages/AddChildScreen";
-import EditProfileScreen from "./pages/EditProfileScreen";
- 
+import VerifyQuestsScreen   from "./pages/VerifyQuestsScreen";
+import SettingsScreen       from "./pages/SettingsScreen";
+import AddChildScreen       from "./pages/AddChildScreen";
+import EditProfileScreen    from "./pages/EditProfileScreen";
+
 export type RootStackParamList = {
-  Login: undefined;
-  SelectUser: undefined;
-  Register: undefined;
-  ProfileLogin: { user: { id: string; name: string; type: string; avatarColor: string } };
-  MainAppAdminScreen: undefined;
-  ChildDashboardScreen: { childId: string; childName: string; isAdmin?: boolean };
-  VerifyQuestsScreen: undefined;
+  Login:                undefined;
+  SelectUser:           undefined;
+  Register:             undefined;
+  ProfileLogin:         { user: { id: string; name: string; type: string; avatarColor: string } };
+  MainAppAdminScreen:   undefined;
+  ChildDashboardScreen: { childId: string; childName: string; isAdmin?: boolean; parentId?: string };
+  VerifyQuestsScreen:   undefined;
   Settings: {
-    profileId: string;
-    profileType: "PARENT" | "CHILD";
-    profileName: string;
-    currentUsername?: string;
-    currentEmail?: string;
-    currentPhone?: string;
-    currentAvatarColor?: string;
+    profileId: string; profileType: "PARENT" | "CHILD"; profileName: string;
+    currentUsername?: string; currentEmail?: string;
+    currentPhone?: string; currentAvatarColor?: string;
   };
-  AddChild: undefined;
+  AddChild:    undefined;
   EditProfile: {
-    profileId: string;
-    profileType: "PARENT" | "CHILD";
-    profileName: string;
-    currentUsername?: string;
-    currentEmail?: string;
-    currentPhone?: string;
-    currentAvatarColor?: string;
+    profileId: string; profileType: "PARENT" | "CHILD"; profileName: string;
+    currentUsername?: string; currentEmail?: string;
+    currentPhone?: string; currentAvatarColor?: string;
   };
 };
 

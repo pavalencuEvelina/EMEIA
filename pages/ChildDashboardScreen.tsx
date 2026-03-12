@@ -214,7 +214,7 @@ export default function ChildDashboardScreen({ route, navigation }: any) {
               </TouchableOpacity>
             )}
             <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteBtn}>
-              <MaterialCommunityIcons name="trash-can-outline" size={20} color="#ff4444" />
+              <MaterialCommunityIcons name="trash-can-outline" size={22} color="#ff4444" />
             </TouchableOpacity>
           </>
         )}
@@ -280,11 +280,39 @@ export default function ChildDashboardScreen({ route, navigation }: any) {
                 <MaterialCommunityIcons name="plus" size={18} color="#000" />
                 <Text style={styles.addBtnText}>Quest</Text>
               </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.deleteChildBtn}
+                onPress={() => {
+                  Alert.alert(
+                    `Delete ${childName}?`,
+                    "This will permanently remove this child along with all their quests and coin history.",
+                    [
+                      { text: "Cancel", style: "cancel" },
+                      {
+                        text: "Delete",
+                        style: "destructive",
+                        onPress: async () => {
+                          if (!parentId) return;
+                          try {
+                            await adminService.deleteChild(childId, parentId);
+                            navigation.goBack();
+                          } catch (e: any) {
+                            Alert.alert("Error", e.message);
+                          }
+                        },
+                      },
+                    ]
+                  );
+                }}
+              >
+                <MaterialCommunityIcons name="trash-can-outline" size={22} color="#ff4444" />
+              </TouchableOpacity>
             </>
           )}
           {!isAdmin && (
             <TouchableOpacity onPress={() => navigation.navigate("Settings", {
               profileId: childId, profileType: "CHILD", profileName: childName,
+              currentAvatarColor: data?.avatarColor,
             })}>
               <MaterialCommunityIcons name="cog" size={26} color="#555" />
             </TouchableOpacity>
@@ -524,8 +552,9 @@ const styles = StyleSheet.create({
   actions:   { flexDirection: "row", alignItems: "center", gap: 8 },
   circleBtn: { borderRadius: 20 },
   doneBtn:   { backgroundColor: "#FF8C00", borderRadius: 20 },
-  editBtn:   { padding: 6, backgroundColor: "#1a0f00", borderRadius: 8 },
-  deleteBtn: { padding: 6, backgroundColor: "#1a0000", borderRadius: 8 },
+  editBtn:        { padding: 8, marginLeft: 4 },
+  deleteBtn:      { padding: 8, marginLeft: 4 },
+  deleteChildBtn: { padding: 6, marginLeft: 6 },
 
   // Coin history rows
   historyRow:  { flexDirection: "row", alignItems: "center", paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: "#111" },
